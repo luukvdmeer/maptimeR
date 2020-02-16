@@ -1,5 +1,5 @@
 ---
-title: "R for spatial computing"
+title: "Intro to R for spatial analysis"
 subtitle: "Maptime Salzburg"
 author: "Luuk van der Meer"
 date: "20.02.2020"
