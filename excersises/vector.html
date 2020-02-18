@@ -1516,11 +1516,55 @@ div.tocify {
 </div>
 
 
-<div id="part-i" class="section level2">
-<h2>Part I</h2>
+<div id="download-and-read" class="section level2">
+<h2>Download and Read</h2>
+<pre class="r"><code>download.file(
+  &#39;https://www.salzburg.gv.at/ogd/7b5df951-b8b0-4153-b599-490b4fe39d8b/Burgen_und_Schloesser_Shapefile.zip&#39;, 
+  destfile = &#39;../temp/burgen.zip&#39;
+)
+unzip(&#39;../temp/burgen.zip&#39;, exdir = &#39;../temp&#39;)</code></pre>
+<pre class="r"><code>library(sf)</code></pre>
+<pre><code>## Linking to GEOS 3.6.1, GDAL 2.2.3, PROJ 4.9.3</code></pre>
+<pre class="r"><code>schloss = read_sf(&#39;../temp/Burgen_und_Schloesser/Burgen_und_Schloesser.shp&#39;)</code></pre>
 </div>
-<div id="part-ii" class="section level2">
-<h2>Part II</h2>
+<div id="explore-data" class="section level2">
+<h2>Explore data</h2>
+<pre class="r"><code>head(schloss)</code></pre>
+<pre><code>## Simple feature collection with 6 features and 9 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: 428227.9 ymin: 260199.2 xmax: 432843 ymax: 295754.9
+## epsg (SRID):    NA
+## proj4string:    +proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=450000 +y_0=-5000000 +ellps=bessel +units=m +no_defs
+## # A tibble: 6 x 10
+##   Name  Adresse HNR   Ort     PLZ Gemeinde GEMNR DBLink PDFLink
+##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  
+## 1 Schl~ Salzac~ 9     Anif   5081 Anif     50301 http:~ &lt;NA&gt;   
+## 2 Schl~ Blühnb~ 53    Tenn~  5451 Werfen   50424 http:~ &lt;NA&gt;   
+## 3 Schl~ Schwar~ 37    Salz~  5026 Salzburg 50101 http:~ &lt;NA&gt;   
+## 4 Schl~ Arenbe~ 10    Salz~  5020 Salzburg 50101 http:~ &lt;NA&gt;   
+## 5 Edmu~ Mönchs~ 2     Salz~  5020 Salzburg 50101 http:~ &lt;NA&gt;   
+## 6 Schl~ Hellbr~ 52    Salz~  5020 Salzburg 50101 http:~ &lt;NA&gt;   
+## # ... with 1 more variable: geometry &lt;POINT [m]&gt;</code></pre>
+<pre class="r"><code>st_crs(schloss) ## looks like EPSG:31258 - MGI / Austria GK M31</code></pre>
+<pre><code>## Coordinate Reference System:
+##   No EPSG code
+##   proj4string: &quot;+proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=450000 +y_0=-5000000 +ellps=bessel +units=m +no_defs&quot;</code></pre>
+<pre class="r"><code>dim(schloss)</code></pre>
+<pre><code>## [1] 104  10</code></pre>
+<pre class="r"><code>st_geometry(schloss)</code></pre>
+<pre><code>## Geometry set for 104 features 
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: 369853.9 ymin: 215126.1 xmax: 488768.8 ymax: 314745.1
+## epsg (SRID):    NA
+## proj4string:    +proj=tmerc +lat_0=0 +lon_0=13.33333333333333 +k=1 +x_0=450000 +y_0=-5000000 +ellps=bessel +units=m +no_defs
+## First 5 geometries:</code></pre>
+<pre><code>## POINT (430134.6 289692.9)</code></pre>
+<pre><code>## POINT (432843 260199.2)</code></pre>
+<pre><code>## POINT (431729 294215.6)</code></pre>
+<pre><code>## POINT (429486.6 295754.9)</code></pre>
+<pre><code>## POINT (428227.9 295454.4)</code></pre>
 </div>
 
 

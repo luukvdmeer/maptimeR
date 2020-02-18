@@ -15,6 +15,28 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Part I
+## Download and Read
 
-## Part II
+```{r download, eval = F}
+download.file(
+  'https://www.salzburg.gv.at/ogd/7b5df951-b8b0-4153-b599-490b4fe39d8b/Burgen_und_Schloesser_Shapefile.zip', 
+  destfile = '../temp/burgen.zip'
+)
+unzip('../temp/burgen.zip', exdir = '../temp')
+```
+
+```{r read}
+library(sf)
+schloss = read_sf('../temp/Burgen_und_Schloesser/Burgen_und_Schloesser.shp')
+```
+
+
+## Explore data
+
+```{r explore}
+head(schloss)
+st_crs(schloss) ## looks like EPSG:31258 - MGI / Austria GK M31
+dim(schloss)
+st_geometry(schloss)
+```
+
