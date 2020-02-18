@@ -44,7 +44,7 @@ schloss = read_sf('../temp/Burgen_und_Schloesser/Burgen_und_Schloesser.shp')
 ```
 
 ***
-**_Note:_** `sf` uses GDAL as a base, and can read from different drivers, type `sf::st_drivers()` on your console to see a list of all supported formats. It also supports loading data from databases and directly from URLs. Here is a [cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/sf.pdf) on the main functions of `sf`.
+**_Note:_** `sf` uses GDAL as a base, and can read from different drivers, type `sf::st_drivers()` on your console to see a list of all supported formats. It also supports loading data from databases and directly from URLs. Here is a [cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/sf.pdf){target="_blank"} on the main functions of `sf`.
 
 ***
 
@@ -59,7 +59,7 @@ plot(st_geometry(schloss)) ## This will plot only the geometry and not every att
 
 ## Interactive exploration
 
-The [`mapview`](https://r-spatial.github.io/mapview/) package is a great option to fastly explore your data with one line of code. Click on a point and check the attributes!
+The [`mapview`](https://r-spatial.github.io/mapview/){target="_blank"} package is a great option to fastly explore your data with one line of code. Click on a point and check the attributes!
 
 ```{r interactive}
 library(mapview)
