@@ -269,7 +269,7 @@ g %>% ggplotly()
 ```{r}
 library(tmap)
 t = tm_shape(attractions_salzburg) +
-  tm_polygons(col = 'population', style = 'jenks') 
+  tm_polygons(col = 'population', style = 'jenks', palette = 'viridis') 
 tmap_mode('plot')
 t
 ```
@@ -284,4 +284,62 @@ st_write(attractions_salzburg, 'data/result.gpkg')
 ```
 
 # Shiny your data!
+
+Try this code out to get a simple Shiny app with the result we just got! To do so, copy the code on a new R script and run it ;)
+
+This is a very basic example, but you can add many more things! Try adding a slider, or printing a data frame after you click on a polygon, with a list of castles you can visit in the muncipality selected...
+
+```{r, eval = F}
+library(tmap)
+library(sf)
+
+if (require("shiny")) {
+  
+  result = st_read('data/result.gpkg')
+  result_vars = setdiff(names(result), c("id", "name", "geom"))
+  
+  
+  ui <- fluidPage(
+    # Application title
+    titlePanel("Salzburg District population and touristic attractions"),
+    
+    # Top panel with municipality name
+    verticalLayout(
+      
+      wellPanel(textOutput("municipality")),
+      
+      # the map itself
+      tmapOutput("map"),
+      selectInput("attribute", label = "Select variable: ", result_vars)
+    )
+  )
+  
+  server <- function(input, output, session) {
+    output$map <- renderTmap({
+      tm_shape(result) +
+        tm_polygons(col = result_vars[1], zindex = 401, style = 'jenks', palette = 'viridis')
+    })
+    
+    observe({
+      var <- input$attribute
+      tmapProxy("map", session, {
+        tm_remove_layer(401) +
+          tm_shape(result) +
+          tm_polygons(var, zindex = 401, style = 'jenks', palette = 'viridis')
+      })
+    })
+    
+    observe({
+      event <- input$map_shape_click
+      output$municipality <- renderText(as.character(result$name[paste0('X',result$id) == event$id]))
+
+    })
+    
+
+  }	
+  
+  app <- shinyApp(ui, server)
+  if (interactive()) app
+}
+```
 
