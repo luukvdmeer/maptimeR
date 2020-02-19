@@ -4,6 +4,7 @@ library(sf)
 if (require("shiny")) {
   
   result = st_read('data/result.gpkg')
+  ## Remove variables that will not be options for plotting
   result_vars = setdiff(names(result), c("id", "name", "geom"))
   
   
