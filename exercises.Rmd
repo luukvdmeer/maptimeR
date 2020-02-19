@@ -1,0 +1,237 @@
+---
+title: "Intro to spatial vector data analysis with R"
+author: "Luuk van der Meer & Lorena Abad"
+date: "20.02.2020"
+output:
+  html_document:
+    theme: spacelab
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Set up 
+
+### Install R and RStudio
+First things first. To complete this exercises, you first have to install the  [R base system](https://cran.r-project.org/) and [RStudio Desktop](https://rstudio.com/products/rstudio/download/). RStudio is an integrated development environment (IDE) for R, which will help you to have easier control over your R code. If you are in doubt about something, don't hesitate to look at the [RStudio Cheatsheet](https://d33wubrfki0l68.cloudfront.net/0dc0efccfaf638de8be4ce43e2bab8a91541d3d2/c4fdc/wp-content/uploads/2018/08/rstudio-ide.png)
+
+> **Tip:**
+> Cheatsheets are a very useful resource to help you out. Find [here](https://rstudio.com/resources/cheatsheets/) a wide variety of cheatsheets for all kinds of R applications.
+
+### Get the course materials
+You can find all course materials in the [maptimeR repository](https://github.com/luukvdmeer/maptimeR) on GitHub. The easiest way to start with the exercises, is to clone this repository (of course, you can also fork it first, such that you can push your results to your own copy of the repository afterwards). If you don't have Git, or don't want to use it, you can download the file `exercises.Rmd` and store it in a new directory named `maptimeR`.
+
+### Create a project
+Now, you can open RStudio! The most convenient way to work on a specific task in RStudio, is to create a [project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) for it. Each project has its own working directory, workspace, history, and source documents. If you cloned the git repository, a project file is already in there, and you can simply open it by clicking `File -> Open Project`. If you only downloaded the exercises, you click instead on `File -> New Project`, choose `Existing Directory`, and select the `maptimeR` directory in which you stored the exercises.
+
+### Open the exercises source file
+In the bottom right square of your screen, under the header `Files`, you will see a list of all files that are part of your projects directory. One of them is `exercises.Rmd`. The file extension `.Rmd` stands for R Markdown. Markdown itself is a simple formatting language where you write your text in plain text rather than in complicated code like HTML or LateX. R Markdown enables you to embed 'chuncks' of R code in such Markdown files. Like that, it is used for making dynamic documents with R. To work with it, we do need to install the `rmarkdown` package. Do so by running `install.packages("rmarkdown")` in the console pane, which you see in the bottom left square of your screen. 
+
+Now, you can open `exercises.Rmd` by clicking on it. If you have a strong aversion against clicking, you can also run `file.edit("exercises.Rmd")` in the console pane.
+
+# Get started
+
+### Structure
+The exercises are divided into several chapters. Each chapter provides some explanation, accompanied with examples, and ends with a set of hands-on exercises. Some of these exercises can be answered with just text, but most of them require you to write R code. The most convenient way is to include your answers in the `exercises.Rmd` file that you opened in RStudio during setup. Under each exercise, you can - on a new line - either type your textual answer in plain text, or create an R code chunk in which you write R code. You can see that each R code chunck starts with \`\`\`{r} and ends with \`\`\`. In between those two, you can put R code. You can execute the code of each individual chunk by clicking the green arrow in the top-right of the chunk, or by pressing Ctrl+Shift+Enter. Alternatively, you can execute all chunks in the whole document by pressing Ctrl+Alt+R.
+
+> **Tip:**
+> In R Markdown files, you are not limited to chuncks of R code, but you can also include chuncks of, for example, Python and SQL code! See [here](https://bookdown.org/yihui/rmarkdown/language-engines.html).
+
+### Understand the basics of R Markdown
+The great thing about R Markdown is that you can easily render your document in a readable format, such as a web page, a PDF document, or a Word document. You can do this easiest with the Knit button in the menu just above the file. This makes it also much nicer to share your work! To get a basic understanding of how to work with R Markdown, please read and/or watch the [R Markdown Quick Tour](https://rmarkdown.rstudio.com/authoring_quick_tour.html) before you proceed! Also, you can always look at the [R Markdown Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf).
+
+> **Tip:**
+> If you want to export your file to PDF, you need to have LaTeX. You don't have to leave RStudio for this! Install the R package tinytex with `install.packages("tinytex")` and then run `tinytex::install_tinytex()` to install TinyTex on your computer. This is just if you want to try, rendering to HTML is what we'll do in this course.
+
+### Install packages
+In the exercises, you will use several R packages. R packages contain (mainly) functions that extend the functionality of the base R languague. They are written by developers who love to share their work and make your life easier! Packages can be installed from a central package repository called CRAN with `install.packages("< package name >")`. 
+
+Any R developer who takes his work seriously, will probably upload his package to CRAN at some point. However, packages that are in earlier development will not be in the CRAN repository yet. Often, they just live on GitHub. With the `remotes` package, you can install R packages directly from GitHub: `remotes::install_github("< user/repo >")`.
+
+Let's install now the packages we will use (if you don't already have them). Don't worry, they are all on CRAN. Instead of calling `install.packages()` multiple times, we can provide it a single vector (created as `c()`) containing multiple package names.
+
+```{r, eval = F}
+install.packages(c(
+  "tidyverse", # a meta-package that contains a set of packages designed for data science
+  "sf", # for spatial vector data analysis
+  "tmap", # for advanced thematic mapping
+  "mapview", # for interactive mapping
+  "shiny", # for creating a web-app
+))
+```
+
+Installing a package, means that the package code is now on your computer, but it does not mean it is also loaded into your current R session. To do that, you will have to run `library(< package name >)`. You can also run a function from an installed package without loading the package explicity, by running `< package name >::< function name >()`. When you used `library()`, there is no need anymore to include `< package name >::` before a function call, but you might still want to do it such that others (including your future self) know exactly to which package a used function belongs.
+
+> **Tip:**
+> A nice thing about R and its packages is that the documentation is always available. If you want to know how a function works, just type `?` in front of any function on the console, and you will get the help page for it. e.g. `?install.packages`.
+
+# Load data
+
+We can load data directly from a URL, by using the `download.file()` function. Here, we download the data only if it does not exist yet. Like that, you will not wasting time on downloading a file that you already have!
+
+```{r}
+# We will store the data in a folder called data.
+# We only create this folder when it does not exist yet!
+if (!dir.exists("data")) dir.create("data")
+
+# Define where to get the data from, and where to store it.
+src = "https://www.salzburg.gv.at/ogd/7b5df951-b8b0-4153-b599-490b4fe39d8b/Burgen_und_Schloesser_Shapefile.zip"
+dst = "data/castles.zip"
+
+# Download and unzip the file, if it does not exist yet.
+if (!file.exists(dst)) {
+  download.file(src, dst)
+  unzip(dst, exdir = "data")
+}
+``` 
+
+To read and manipulate vector data in R, we will use the [`sf`](https://r-spatial.github.io/sf/){target="_blank"} package. First, we load the package into our current R session, such that we can use its functions directly.
+
+```{r}
+library(sf)
+```
+
+You see that when loading the package, you get informed that it links to respectively GDAL, GEOS and PROJ. These are the well-known geospatial workhorse libraries that get used by a lot of software (including ArcGIS, QGIS, PostGIS and the spatial packages of Python). GDAL can read, write and convert a wide varierty of geospatial file formats, GEOS provides functions for two-dimensional geometry operations (e.g. intersections, unions, buffers), and PROJ takes care of coordinate reference systems. What `sf` does, is bringing the functionalities of these libraries into R, in a clear, unified structure.
+
+For data reading, this means that `sf` can read all data formats that are understood by GDAL. It also supports loading data from databases and directly from URLs. Data reading is now as simple as just providing a file location to the read function, and it will be automatically determined what type of format it is, and act accordingly.
+
+```{r}
+# Read the downloaded shapefile.
+castles = st_read("data/Burgen_und_Schloesser/Burgen_und_Schloesser.shp")
+```
+
+`castles` is now an `sf` object that lives in your R environment, which you can see in the top-right pane of RStudio.
+
+> **Note:**
+> When you are a Windows or Mac user, installing `sf` brings GDAL, GEOS and PROJ along. However, if you use Linux, you have to have these libraries installed on your system (we assume that there are no geospatial Linux users who don't have this, though)
+
+### Exercises
+#### 1. Run `st_drivers()` in the console to see all file formats supported by `sf`.
+#### 2. Load the following three datasets into your R session.
+
+* museums: https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
+* municipalities: https://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip
+* town_halls_salzburg: https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json
+
+```{r}
+# https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
+museums = st_read("https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json")
+
+# http://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip
+src = "http://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip"
+dst = "data/municipalities.geojson"
+
+if (!file.exists(dst)) {
+  download.file(src, dst)
+  unzip(dst, exdir = "data")
+}
+
+municipalities = st_read("data/STATISTIK_AUSTRIA_GEM_20200101Polygon.shp")
+
+# https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json
+town_halls_salzburg = st_read("https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json")
+``` 
+
+# Explore data
+
+Before analyzing data, it is very important to know what you're dealing with! Therefore, you should always do a quick exploration of your data. How many observations and variables do I have? What is the CRS of the data? How does it look like on a map? Et cetera.
+
+A core data structure in R is the so-called data frame, which is very similar to a database table. We call a data frame [tidy](https://r4ds.had.co.nz/tidy-data.html) if each row is an observation, and each column a variable. An `sf` object extends such a data frame, adding a special/spatial column, in which the geometry of each observation is stored. This geometry is called sticky, since it always sticks to the observation, no matter what you do. For example, if you select a specific variable, the geometry column will not be removed. Additionally, each `sf` object contains information about some spatial properties of the data, for example: the geometry type, the spatial extent (i.e. the bounding box), and the coordinate reference system.
+
+<img src="https://user-images.githubusercontent.com/520851/50280460-e35c1880-044c-11e9-9ed7-cc46754e49db.jpg" style="display: block; margin: auto;" />
+*(Illustration by [Allison Horst](https://twitter.com/allison_horst/status/1071456081308614656))*
+
+The most common geometry types supported by `sf` are the following:
+
+| type | description                                        |
+| ---- | -------------------------------------------------- |
+| `POINT` | zero-dimensional geometry containing a single point |
+| `LINESTRING` | sequence of points connected by straight, non-self intersecting line pieces; one-dimensional geometry |
+| `POLYGON` | geometry with a positive area (two-dimensional); sequence of points form a closed, non-self intersecting ring; the first ring denotes the exterior ring, zero or more subsequent rings denote holes in this exterior ring |
+| `MULTIPOINT` | set of points; a MULTIPOINT is simple if no two Points in the MULTIPOINT are equal |
+| `MULTILINESTRING` | set of linestrings |
+| `MULTIPOLYGON` | set of polygons |
+| `GEOMETRYCOLLECTION` | set of geometries of any type except GEOMETRYCOLLECTION |
+*(Source: [sf documentation](https://r-spatial.github.io/sf/articles/sf1.html))*
+
+For PostGIS users, these types probably seem familiar. That is because `sf` implements a formal standard on how objects in the real world can be represented and stored in computers, and which geometrical operations should be defined for them. This standard is called [Simple Feature Access](https://www.opengeospatial.org/standards/sfa). So, now you also know why `sf` is called `sf`!
+
+Okay, enough theory. How do we see access all this information, such that we can explore the data? The `head()` function is a good place to start. It shows you the first few rows of a data frame.
+
+> **Tip:**
+> Just running `castles` will print the complete data frame, but this will look very messy. In RStudio, you can run `View(castles)` instead, which will open the data frame in a readable way in separate pane.
+
+```{r} 
+head(castles)
+```
+
+You can retrieve the total number of rows and columns by running `dim()`.
+
+```{r}
+dim(castles)
+```
+
+These are both basic R functions. To access the spatial properties of an `sf` object, you'll need specific functions from the `sf` package. For example, `st_crs()` shows you information on the coordinate reference system. Similarly, `st_bbox()` shows the spatial extent of the data.
+
+```{r}
+st_crs(castles)
+st_bbox(castles)
+```
+
+You can extract only the geometry of the data (without all attributes) with the `st_geometry()` function. This is helpful when you just want to quickly see how the data points are aligned in space. You do so by plotting the geometry of the data.
+
+```{r}
+plot(st_geometry(castles))
+```
+
+However, nowadays it is just as easy to create a quick interactive map of your data, and explore them interactively. The [`mapview`](https://r-spatial.github.io/mapview/){target="_blank"} package is a great option to for doing this in just one line of code. Click on a point and check the attributes!
+
+```{r} 
+library(mapview)
+mapview(castles)
+``` 
+
+### Exercises
+#### 1. Explore the other three datasets you loaded before.  What do they have in common? What are the differences?
+* HINT: Don't include the interactive map for the municipalities in the .Rmd, but run the code just in your console instead. Such a big map (more than 2000 detailed polygons) will make your .Rmd very large and slow to render.
+#### 2. What are challenges you identify for merging/joining all data we have loaded so far?
+#### 3. Test different background layers for mapview interactive maps
+
+# Wrangle data
+```{r}
+library(tidyverse)
+
+town_halls_salzburg = st_transform(town_halls_salzburg, crs = st_crs(municipalities))
+
+municipalities_salzburg = st_join(municipalities, town_halls_salzburg, left = FALSE) %>%
+  select(id, name)
+
+castle_count = castles %>%
+  st_set_geometry(NULL) %>%
+  group_by(Gemeinde) %>%
+  summarise(castles = n())
+
+municipalities_salzburg = left_join(municipalities_salzburg, castle_count, by = c("name" = "Gemeinde"))
+municipalities_salzburg = municipalities_salzburg %>% mutate(castles = replace_na(castles, 0))
+
+museums = st_transform(museums, crs = st_crs(municipalities_salzburg))
+museums = st_join(museums, municipalities_salzburg)
+
+museum_count = museums %>%
+  st_set_geometry(NULL) %>%
+  group_by(name) %>%
+  summarise(museums = n())
+
+municipalities_salzburg = left_join(municipalities_salzburg, museum_count, by = "name")
+municipalities_salzburg = municipalities_salzburg %>% mutate(museums = replace_na(museums, 0))
+municipalities_salzburg = municipalities_salzburg %>% mutate(total = castles + museums)
+
+municipalities_salzburg = municipalities_salzburg %>% mutate(area = st_area(geometry))
+municipalities_salzburg = municipalities_salzburg %>% mutate(density = total/area)
+```
