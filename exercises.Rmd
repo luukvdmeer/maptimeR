@@ -2,6 +2,7 @@
 title: "Intro to spatial vector data analysis with R"
 author: "Luuk van der Meer & Lorena Abad"
 date: "20.02.2020"
+runtime: shiny
 output:
   html_document:
     theme: spacelab
@@ -117,6 +118,7 @@ castles = st_read("data/Burgen_und_Schloesser/Burgen_und_Schloesser.shp")
 
 * museums: https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
 * municipalities: https://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip
+* population: https://www.statistik.at/wcm/idc/idcplg?IdcService=GET_NATIVE_FILE&RevisionSelectionMethod=LatestReleased&dDocName=104037
 * town_halls_salzburg: https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json
 
 ```{r}
@@ -134,8 +136,11 @@ if (!file.exists(dst)) {
 
 municipalities = st_read("data/STATISTIK_AUSTRIA_GEM_20200101Polygon.shp")
 
-# https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json
 town_halls_salzburg = st_read("https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json")
+
+population = read.csv("https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv", skip = 2, sep = ";")
+# download.file("https://www.statistik.at/wcm/idc/idcplg?IdcService=GET_NATIVE_FILE&RevisionSelectionMethod=LatestReleased&dDocName=104037", destfile = 'data/population.xlsx')
+# population = readxl::read_excel('data/population.xlsx', skip = 1)
 ``` 
 
 # Explore data
@@ -205,20 +210,28 @@ mapview(castles)
 
 # Wrangle data
 ```{r}
-library(tidyverse)
+library(tidyverse, quietly = T, warn.conflicts = F)
 
-town_halls_salzburg = st_transform(town_halls_salzburg, crs = st_crs(municipalities))
+population2015 = population %>% 
+  filter(REF_YEAR == 2015) %>% 
+  group_by(CITY_CODE) %>% 
+  summarise(population = sum(POP_TOTAL)) %>% 
+  mutate(CITY_CODE = as.factor(CITY_CODE))
 
-municipalities_salzburg = st_join(municipalities, town_halls_salzburg, left = FALSE) %>%
-  select(id, name)
+# town_halls_salzburg = st_transform(town_halls_salzburg, crs = st_crs(municipalities))
+
+municipalities_salzburg = inner_join(municipalities, population2015, by = c('id' = 'CITY_CODE'))
+# municipalities_salzburg = st_join(municipalities, town_halls_salzburg, left = FALSE) %>%
+# select(id, name)
 
 castle_count = castles %>%
   st_set_geometry(NULL) %>%
   group_by(Gemeinde) %>%
   summarise(castles = n())
 
-municipalities_salzburg = left_join(municipalities_salzburg, castle_count, by = c("name" = "Gemeinde"))
-municipalities_salzburg = municipalities_salzburg %>% mutate(castles = replace_na(castles, 0))
+castles_salzburg = left_join(municipalities_salzburg, castle_count, by = c("name" = "Gemeinde")) 
+
+castles_salzburg = castles_salzburg %>% mutate(castles = replace_na(castles, 0))
 
 museums = st_transform(museums, crs = st_crs(municipalities_salzburg))
 museums = st_join(museums, municipalities_salzburg)
@@ -228,10 +241,67 @@ museum_count = museums %>%
   group_by(name) %>%
   summarise(museums = n())
 
-municipalities_salzburg = left_join(municipalities_salzburg, museum_count, by = "name")
-municipalities_salzburg = municipalities_salzburg %>% mutate(museums = replace_na(museums, 0))
-municipalities_salzburg = municipalities_salzburg %>% mutate(total = castles + museums)
+attractions_salzburg = left_join(castles_salzburg, museum_count, by = "name")
+attractions_salzburg = attractions_salzburg %>% mutate(museums = replace_na(museums, 0))
+attractions_salzburg = attractions_salzburg %>% 
+  mutate(total = castles + museums) %>% 
+  mutate(area = st_area(geometry))
 
-municipalities_salzburg = municipalities_salzburg %>% mutate(area = st_area(geometry))
-municipalities_salzburg = municipalities_salzburg %>% mutate(density = total/area)
+attractions_salzburg = attractions_salzburg %>% mutate(density = total/area)
 ```
+
+# Visualize data
+
+```{r}
+plot(total ~ population, data = attractions_salzburg)
+
+library(ggplot2)
+g = attractions_salzburg %>% 
+  # filter(name != 'Salzburg') %>% 
+  ggplot(aes(x = museums, y = castles)) +
+  # ggplot(aes(x = units::drop_units(area), y = total)) +
+  geom_point(alpha = 0.5, size = 4)
+g
+
+library(plotly, quietly = T)
+g %>% ggplotly()
+```
+
+```{r}
+library(tmap)
+t = tm_shape(attractions_salzburg) +
+  tm_polygons(col = 'population', style = 'jenks') 
+tmap_mode('plot')
+t
+```
+
+```{r}
+tmap_mode('view')
+t
+```
+
+# Shiny your data!
+
+```{r}
+inputPanel(
+  selectInput("attribute", label = "Select attribute:",
+              choices = c('population', 'museums', 'castles', 'attractions'), selected = 'population')
+  
+  # sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+  #             min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderTmap({
+  tm_shape(attractions_salzburg) +
+  tm_polygons(col = input$attribute, style = 'jenks') 
+})
+
+# renderPlot({
+#   hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+#        xlab = "Duration (minutes)", main = "Geyser eruption duration")
+#   
+#   dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+#   lines(dens, col = "blue")
+# })
+```
+
