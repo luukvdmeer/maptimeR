@@ -118,7 +118,7 @@ castles = st_read("data/Burgen_und_Schloesser/Burgen_und_Schloesser.shp")
 * museums: https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
 * municipalities: https://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip
 * population: https://www.statistik.at/wcm/idc/idcplg?IdcService=GET_NATIVE_FILE&RevisionSelectionMethod=LatestReleased&dDocName=104037
-* town_halls_salzburg: https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json
+* population: https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv
 
 ```{r}
 # https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
@@ -135,11 +135,9 @@ if (!file.exists(dst)) {
 
 municipalities = st_read("data/STATISTIK_AUSTRIA_GEM_20200101Polygon.shp")
 
-town_halls_salzburg = st_read("https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json")
+# town_halls_salzburg = st_read("https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json")
 
 population = read.csv("https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv", skip = 2, sep = ";")
-# download.file("https://www.statistik.at/wcm/idc/idcplg?IdcService=GET_NATIVE_FILE&RevisionSelectionMethod=LatestReleased&dDocName=104037", destfile = 'data/population.xlsx')
-# population = readxl::read_excel('data/population.xlsx', skip = 1)
 ``` 
 
 # Explore data
@@ -243,25 +241,27 @@ museum_count = museums %>%
 attractions_salzburg = left_join(castles_salzburg, museum_count, by = "name")
 attractions_salzburg = attractions_salzburg %>% mutate(museums = replace_na(museums, 0))
 attractions_salzburg = attractions_salzburg %>% 
-  mutate(total = castles + museums) %>% 
+  mutate(attractions = castles + museums) %>% 
   mutate(area = st_area(geometry))
 
-attractions_salzburg = attractions_salzburg %>% mutate(density = total/area)
+attractions_salzburg = attractions_salzburg %>% mutate(attractions_density = attractions/area)
 ```
 
 # Visualize data
 
 ```{r}
-plot(total ~ population, data = attractions_salzburg)
+# This is base R plotting. A simple scatterplot can be created with one line. Try changing the variables!
+plot(attractions ~ population, data = attractions_salzburg)
 
+# A more 'tidy' way to plot, with very nice results is ggplot2
 library(ggplot2)
 g = attractions_salzburg %>% 
   # filter(name != 'Salzburg') %>% 
   ggplot(aes(x = museums, y = castles)) +
-  # ggplot(aes(x = units::drop_units(area), y = total)) +
   geom_point(alpha = 0.5, size = 4)
 g
 
+# Which we can easily make interactive with the plotly package
 library(plotly, quietly = T)
 g %>% ggplotly()
 ```
@@ -270,7 +270,7 @@ g %>% ggplotly()
 library(tmap)
 t = tm_shape(attractions_salzburg) +
   tm_polygons(col = 'population', style = 'jenks', palette = 'viridis') 
-tmap_mode('plot')
+
 t
 ```
 
@@ -295,18 +295,20 @@ library(sf)
 
 if (require("shiny")) {
   
+  ## Load the result just created 
   result = st_read('data/result.gpkg')
   ## Remove variables that will not be options for plotting
   result_vars = setdiff(names(result), c("id", "name", "geom"))
   
-  
+  # Prepare the basic layout of the User Interface
   ui <- fluidPage(
     # Application title
     titlePanel("Salzburg District population and touristic attractions"),
     
-    # Top panel with municipality name
+    # Include a vertical layout to add bith the text box and the map
     verticalLayout(
       
+      # Top panel with municipality name
       wellPanel(textOutput("municipality")),
       
       # the map itself
@@ -315,12 +317,25 @@ if (require("shiny")) {
     )
   )
   
+  # Prepare the server 
   server <- function(input, output, session) {
+    
+    # Here comes the code for the tmap (remember the interactive version?)
     output$map <- renderTmap({
       tm_shape(result) +
-        tm_polygons(col = result_vars[1], zindex = 401, style = 'jenks', palette = 'viridis')
+        tm_polygons(
+          # To plot the first variable 
+          col = result_vars[1],
+          # This sets the layer number for the municipalities to plot. 
+          # Always set as 400 + n
+          zindex = 401, 
+          style = 'jenks', 
+          palette = 'viridis'
+        )
     })
     
+    # Adding some interaction, this section will change the attribute 
+    # plotted when the user selects it on the drop-down list
     observe({
       var <- input$attribute
       tmapProxy("map", session, {
@@ -330,15 +345,24 @@ if (require("shiny")) {
       })
     })
     
+    # This will display the name of the municipality on the 
+    # text box on top of the map when its polygon is clicked on the map
     observe({
       event <- input$map_shape_click
-      output$municipality <- renderText(as.character(result$name[paste0('X',result$id) == event$id]))
+      output$municipality <- renderText(
+        # We had to do some workarounds for this section to work properly,
+        # due to data classes mistmatches 
+        # Essentially we obtain the name of the municipality that corresponds 
+        # to the id clicked on the map by matching it to the municipality id 
+        as.character(result$name[paste0('X',result$id) == event$id])
+      )
 
     })
     
 
   }	
   
+  # Save the app
   app <- shinyApp(ui, server)
   if (interactive()) app
 }
