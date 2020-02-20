@@ -65,7 +65,7 @@ install.packages(c(
   "ggplot2", # for fancy plots
   "plotly", # for interactive plots
   "shiny", # for creating a web-app
-  "flexdashboard", # for including shiny in a dashboard
+  "flexdashboard" # for including shiny in a dashboard
 ))
 ```
 
