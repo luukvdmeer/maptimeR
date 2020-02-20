@@ -31,17 +31,17 @@ You can find all course materials in the [maptimeR repository](https://github.co
 Now, you can open RStudio! The most convenient way to work on a specific task in RStudio, is to create a [project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects) for it. Each project has its own working directory, workspace, history, and source documents. If you cloned the git repository, a project file is already in there, and you can simply open it by clicking `File -> Open Project`. If you only downloaded the exercises, you click instead on `File -> New Project`, choose `Existing Directory`, and select the `maptimeR` directory in which you stored the exercises.
 
 ### Open the exercises source file
-In the bottom right square of your screen, under the header `Files`, you will see a list of all files that are part of your projects directory. One of them is `exercises.Rmd`. The file extension `.Rmd` stands for R Markdown. Markdown itself is a simple formatting language where you write your text in plain text rather than in complicated code like HTML or LateX. R Markdown enables you to embed 'chuncks' of R code in such Markdown files. Like that, it is used for making dynamic documents with R. To work with it, we do need to install the `rmarkdown` package. Do so by running `install.packages("rmarkdown")` in the console pane, which you see in the bottom left square of your screen. 
+In the bottom right square of your screen, under the header `Files`, you will see a list of all files that are part of your projects directory. One of them is `exercises.Rmd`. The file extension `.Rmd` stands for R Markdown. Markdown itself is a simple formatting language where you write your text in plain text rather than in complicated code like HTML or LateX. R Markdown enables you to embed 'chunks' of R code in such Markdown files. Like that, it is used for making dynamic documents with R. To work with it, we do need to install the `rmarkdown` package. Do so by running `install.packages("rmarkdown")` in the console pane, which you see in the bottom left square of your screen. 
 
 Now, you can open `exercises.Rmd` by clicking on it. If you have a strong aversion against clicking, you can also run `file.edit("exercises.Rmd")` in the console pane.
 
 # Get started
 
 ### Structure
-The exercises are divided into several chapters. Each chapter provides some explanation, accompanied with examples, and ends with a set of hands-on exercises. Some of these exercises can be answered with just text, but most of them require you to write R code. The most convenient way is to include your answers in the `exercises.Rmd` file that you opened in RStudio during setup. Under each exercise, you can - on a new line - either type your textual answer in plain text, or create an R code chunk in which you write R code. You can see that each R code chunck starts with \`\`\`{r} and ends with \`\`\`. In between those two, you can put R code. You can execute the code of each individual chunk by clicking the green arrow in the top-right of the chunk, or by pressing Ctrl+Shift+Enter. Alternatively, you can execute all chunks in the whole document by pressing Ctrl+Alt+R.
+The exercises are divided into several chapters. Each chapter provides some explanation, accompanied with examples, and ends with a set of hands-on exercises. Some of these exercises can be answered with just text, but most of them require you to write R code. The most convenient way is to include your answers in the `exercises.Rmd` file that you opened in RStudio during setup. Under each exercise, you can - on a new line - either type your textual answer in plain text, or create an R code chunk in which you write R code. You can see that each R code chunk starts with \`\`\`{r} and ends with \`\`\`. In between those two, you can put R code. You can execute the code of each individual chunk by clicking the green arrow in the top-right of the chunk, or by pressing Ctrl+Shift+Enter. Alternatively, you can execute all chunks in the whole document by pressing Ctrl+Alt+R.
 
 > **Tip:**
-> In R Markdown files, you are not limited to chuncks of R code, but you can also include chuncks of, for example, Python and SQL code! See [here](https://bookdown.org/yihui/rmarkdown/language-engines.html).
+> In R Markdown files, you are not limited to chunks of R code, but you can also include chunks of, for example, Python and SQL code! See [here](https://bookdown.org/yihui/rmarkdown/language-engines.html).
 
 ### Understand the basics of R Markdown
 The great thing about R Markdown is that you can easily render your document in a readable format, such as a web page, a PDF document, or a Word document. You can do this easiest with the Knit button in the menu just above the file. This makes it also much nicer to share your work! To get a basic understanding of how to work with R Markdown, please read and/or watch the [R Markdown Quick Tour](https://rmarkdown.rstudio.com/authoring_quick_tour.html) before you proceed! Also, you can always look at the [R Markdown Cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf).
@@ -50,7 +50,7 @@ The great thing about R Markdown is that you can easily render your document in 
 > If you want to export your file to PDF, you need to have LaTeX. You don't have to leave RStudio for this! Install the R package tinytex with `install.packages("tinytex")` and then run `tinytex::install_tinytex()` to install TinyTex on your computer. This is just if you want to try, rendering to HTML is what we'll do in this course.
 
 ### Install packages
-In the exercises, you will use several R packages. R packages contain (mainly) functions that extend the functionality of the base R languague. They are written by developers who love to share their work and make your life easier! Packages can be installed from a central package repository called CRAN with `install.packages("< package name >")`. 
+In the exercises, you will use several R packages. R packages contain (mainly) functions that extend the functionality of the base R language. They are written by developers who love to share their work and make your life easier! Packages can be installed from a central package repository called CRAN with `install.packages("< package name >")`. 
 
 Any R developer who takes his work seriously, will probably upload his package to CRAN at some point. However, packages that are in earlier development will not be in the CRAN repository yet. Often, they just live on GitHub. With the `remotes` package, you can install R packages directly from GitHub: `remotes::install_github("< user/repo >")`.
 
@@ -62,11 +62,13 @@ install.packages(c(
   "sf", # for spatial vector data analysis
   "tmap", # for advanced thematic mapping
   "mapview", # for interactive mapping
+  "ggplot2", # for fancy plots
+  "plotly", # for interactive plots
   "shiny", # for creating a web-app
 ))
 ```
 
-Installing a package, means that the package code is now on your computer, but it does not mean it is also loaded into your current R session. To do that, you will have to run `library(< package name >)`. You can also run a function from an installed package without loading the package explicity, by running `< package name >::< function name >()`. When you used `library()`, there is no need anymore to include `< package name >::` before a function call, but you might still want to do it such that others (including your future self) know exactly to which package a used function belongs.
+Installing a package, means that the package code is now on your computer, but it does not mean it is also loaded into your current R session. To do that, you will have to run `library(< package name >)`. You can also run a function from an installed package without loading the package explicitly, by running `< package name >::< function name >()`. When you used `library()`, there is no need anymore to include `< package name >::` before a function call, but you might still want to do it such that others (including your future self) know exactly to which package a used function belongs.
 
 > **Tip:**
 > A nice thing about R and its packages is that the documentation is always available. If you want to know how a function works, just type `?` in front of any function on the console, and you will get the help page for it. e.g. `?install.packages`.
@@ -97,7 +99,7 @@ To read and manipulate vector data in R, we will use the [`sf`](https://r-spatia
 library(sf)
 ```
 
-You see that when loading the package, you get informed that it links to respectively GDAL, GEOS and PROJ. These are the well-known geospatial workhorse libraries that get used by a lot of software (including ArcGIS, QGIS, PostGIS and the spatial packages of Python). GDAL can read, write and convert a wide varierty of geospatial file formats, GEOS provides functions for two-dimensional geometry operations (e.g. intersections, unions, buffers), and PROJ takes care of coordinate reference systems. What `sf` does, is bringing the functionalities of these libraries into R, in a clear, unified structure.
+You see that when loading the package, you get informed that it links to respectively GDAL, GEOS and PROJ. These are the well-known geospatial workhorse libraries that get used by a lot of software (including ArcGIS, QGIS, PostGIS and the spatial packages of Python). GDAL can read, write and convert a wide variety of geospatial file formats, GEOS provides functions for two-dimensional geometry operations (e.g. intersections, unions, buffers), and PROJ takes care of coordinate reference systems. What `sf` does, is bringing the functionalities of these libraries into R, in a clear, unified structure.
 
 For data reading, this means that `sf` can read all data formats that are understood by GDAL. It also supports loading data from databases and directly from URLs. Data reading is now as simple as just providing a file location to the read function, and it will be automatically determined what type of format it is, and act accordingly.
 
@@ -111,16 +113,28 @@ castles = st_read("data/Burgen_und_Schloesser/Burgen_und_Schloesser.shp")
 > **Note:**
 > When you are a Windows or Mac user, installing `sf` brings GDAL, GEOS and PROJ along. However, if you use Linux, you have to have these libraries installed on your system (we assume that there are no geospatial Linux users who don't have this, though)
 
+In spatial data science, you can unfortunately not get around dirty CSV files that you'll have to join with your spatial data, so let's also show how to load such a guy into R. `read.csv()` does the job for you.
+
+```{r}
+# Of course, governmental institutions love to put multi-line headers in CSV files (please don't!)
+# Therefore, we have to read starting from the 3rd line. Hence, skip = 2.
+population_sbg = read.csv("https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv", skip = 2, sep = ";")
+```
+
+Again, population_salzburg now lives in your R environment, but this time not as a spatial `sf` object, but as a regular `data.frame`. The file contains information about the population of each municipality in the province of Salzburg, for several years.
+
+```{r}
+head(population_sbg)
+```
+
 ### Exercises
 #### 1. Run `st_drivers()` in the console to see all file formats supported by `sf`.
-#### 2. Load the following three datasets into your R session.
+#### 2. Load the following two datasets into your R session.
 
 * museums: https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
 * municipalities: https://data.statistik.gv.at/data/OGDEXT_GEM_1_STATISTIK_AUSTRIA_20200101.zip
-* population: https://www.statistik.at/wcm/idc/idcplg?IdcService=GET_NATIVE_FILE&RevisionSelectionMethod=LatestReleased&dDocName=104037
-* population: https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv
 
-```{r}
+```{r, include=FALSE}
 # https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json
 museums = st_read("https://www.salzburg.gv.at/ogd/a5841caf-afe2-4f98-bb68-bd4899e8c9cb/Museen.json")
 
@@ -134,10 +148,6 @@ if (!file.exists(dst)) {
 }
 
 municipalities = st_read("data/STATISTIK_AUSTRIA_GEM_20200101Polygon.shp")
-
-# town_halls_salzburg = st_read("https://www.salzburg.gv.at/ogd/3d6227d2-fdd5-47c0-ba9b-ccd104b9ad51/Gemeindeaemter.json")
-
-population = read.csv("https://www.salzburg.gv.at/ogd/f3148c9c-4e14-4258-b00f-b7695b75d480/population-szg-sex-age-city.csv", skip = 2, sep = ";")
 ``` 
 
 # Explore data
@@ -165,9 +175,6 @@ The most common geometry types supported by `sf` are the following:
 For PostGIS users, these types probably seem familiar. That is because `sf` implements a formal standard on how objects in the real world can be represented and stored in computers, and which geometrical operations should be defined for them. This standard is called [Simple Feature Access](https://www.opengeospatial.org/standards/sfa). So, now you also know why `sf` is called `sf`!
 
 Okay, enough theory. How do we see access all this information, such that we can explore the data? The `head()` function is a good place to start. It shows you the first few rows of a data frame.
-
-> **Tip:**
-> Just running `castles` will print the complete data frame, but this will look very messy. In RStudio, you can run `View(castles)` instead, which will open the data frame in a readable way in separate pane.
 
 ```{r} 
 head(castles)
@@ -201,170 +208,298 @@ mapview(castles)
 
 ### Exercises
 #### 1. Explore the other three datasets you loaded before.  What do they have in common? What are the differences?
+
 * HINT: Don't include the interactive map for the municipalities in the .Rmd, but run the code just in your console instead. Such a big map (more than 2000 detailed polygons) will make your .Rmd very large and slow to render.
+
 #### 2. What are challenges you identify for merging/joining all data we have loaded so far?
 #### 3. Test different background layers for mapview interactive maps
 
 # Wrangle data
+
+Now we have reached the fun part, where the real analysis starts! With data wrangling we mean cleaning, filtering, transforming and joining datasets such that we get the results we want. In R, there exists a set of packages, known as the [tidyverse](https://www.tidyverse.org/), that is meant to make your data wrangling life easier and more intuitive. All these packages share an underlying design philosophy, and therefore interact well with each other. You can load all of the core tidyverse packages at once by running `library(tidyverse)`. You will see that eight packages are loaded at once, at that two base R functions are overwritten by tidyverse functions with the same name.
+
 ```{r}
-library(tidyverse, quietly = T, warn.conflicts = F)
+library(tidyverse)
+```
 
-population2015 = population %>% 
-  filter(REF_YEAR == 2015) %>% 
+The main data wrangling workhorse of the tidyverse is the `dplyr` package. The most important functions of that package are:
+
+| function | description                                        |
+| ---- | -------------------------------------------------- |
+| `filter()` | selecting specific observations, i.e. rows |
+| `select()` | selecting specific variables, i.e. columns |
+| `mutate()` | adding a new variable, possibly as a function of other variables |
+| `group_by()` | splitting a dataset in groups, based on a variable |
+| `summarise()` | summarise a dataset by applying a function to a variable, e.g. mean, sum, .. |
+| `*_join()` | joining two datasets based on a variable. Can be a left_join, inner_join, et cetera|
+
+Iconic for the tidyverse design is the so-called pipe function: `%>%`. The pipe is meant to make your workflow of applying functions to data more intuitive. Normally, you read code (in R, but also in Python and other languages) from the inside to the outside. That is, if you want to select some observations from your data, then select a specific variable, and then summarise by calculating the average value of this variables for your selected set of observations, you would write this somehow like:
+
+**summarise(select(filter(data)))**
+
+The pipe command, however, forwards the result of one function as first argument to the next function. In that way, you would write the same workflow like:
+
+**data %>% filter %>% select %>% summarise**
+
+Remember that there is always a cheatsheet to help you out when your are lost: [dplyr cheatsheet](https://d33wubrfki0l68.cloudfront.net/db69c3d03699d395475d2ac14d64f611054fa9a4/e98f3/wp-content/uploads/2018/08/data-transformation.png).
+
+Now, let's showcase the functionality of all core dplyr functions and the pipe. Remember that our dataset `population_salzburg` contained information about the population of each municipality in the province of Salzburg, for several years. Each municipality has two observations (i.e. rows) per year, one for female population, one for male population. The most recent year in the data is 2015. Remember also that you loaded the shapefile of municipalities in Austria in a previous exercise. So, let's formulate the following goal: we want to have a spatial dataset (i.e. including geometry) of all municipalities in the province of Salzburg, containing a variable that describes total population (male plus female) in that municipality.
+
+First, we filter the observations such that we only have the most recent year. Then, we select only the variables of interest from the population data, which are `CITY_CODE` describing the unique id of a municipality, `SEX` describing if the observation regards males or females and `POP_TOTAL` describing the total population observed.
+
+```{r, include=FALSE, warning = FALSE}
+population_sbg_2015 = population_sbg %>%
+  filter(REF_YEAR == 2015) %>%
+  select(CITY_CODE, SEX, POP_TOTAL)
+
+head(population_sbg_2015)
+```
+
+Now, we still have two lines per municipality (i.e. one for male, one for female), which we want to sum. That is: we the data by municipality (column `CITY_CODE`), and then for each group, summarise the `POP_TOTAL` column by calculating the sum of its values.
+
+```{r}
+total_population_sbg_2015 = population_sbg_2015 %>%
   group_by(CITY_CODE) %>% 
-  summarise(population = sum(POP_TOTAL)) %>% 
+  summarise(population = sum(POP_TOTAL))
+
+head(total_population_sbg_2015)
+```
+
+Great! That looks useful. Now we have to somehow add the geometry of each municipality. These are stored in the municipalities dataset, where the equivalent to the `CITY_CODE` column is called `id`. However, there is one last technical issue we have to solve before we can join the two. We are dealing with governmental data, so of course, it is messy. The data type of `CITY_CODE` in `total_population_sbg_2015` is not equal to the data type of `id` in `municipalities`. You do not have to worry here about understanding data types in detail, but you do have to know that we have to make them identical before joining. Therefore, we will create a new column in `total_population_sbg_2015` which overwrites the old `CITY_CODE`, with the same values, but a different datatype.
+
+```{r}
+total_population_sbg_2015 = total_population_sbg_2015 %>%
   mutate(CITY_CODE = as.factor(CITY_CODE))
+```
 
-# town_halls_salzburg = st_transform(town_halls_salzburg, crs = st_crs(municipalities))
+Finally, time to join! The most used joins are a `left_join` and an `inner_join`.
 
-municipalities_salzburg = inner_join(municipalities, population2015, by = c('id' = 'CITY_CODE'))
-# municipalities_salzburg = st_join(municipalities, town_halls_salzburg, left = FALSE) %>%
-# select(id, name)
+type | description
+`inner_join` | return all rows from x where there are matching values in y, and all columns from x and y.
+`left_join` | return all rows from x, and all columns from x and y. Rows in x with no match in y will have `NA` (i.e. 'not available') values in the new columns.
+*(Source: [dplyr documentation](https://dplyr.tidyverse.org/reference/join.html))
 
+For our case now, we want to keep only the Salzburg municipalities from the Austrian wide municipalities dataset, and add the population information to them. That is, we want to return all rows from `municipalities` where there are matching values in `total_population_sbg_2015`. So that is a....`inner_join`!
+
+> **Note:**
+> A `left_join(total_population_sbg_2015, municipalities)` would in this case have given the same result (think about why!), but it would have kept the type of the population dataset, which was a `data.frame`, and not a spatial `sf` object. Hence, you would have had to convert the result to an `sf` object afterwards.
+
+```{r, warning=FALSE}
+municipalities_sbg = municipalities %>%
+  inner_join(total_population_sbg_2015, by = c('id' = 'CITY_CODE'))
+
+head(municipalities_sbg)
+mapview(municipalities_sbg)
+```
+ 
+This seems to have worked very well! Now you know how to use the most important `dplyr` functions, time to move them to the spatial domain. Because after all, the join we just did, was based on an id that was present in both datasets, not on any explicit spatial properties.
+
+`sf` is full of functions to wrangle spatial data. You may have already noticed that most of these functions start with `st_`. Again, if your are a PostGIS user, this will look familiar. Not a coincidence: remember that `sf` is largely based on official standards, that also define valid geometrical operations. Some examples:
+
+`st_transform()` will transform the data into a different CRS:
+```{r}
+# Castles to EPSG:3035
+castles %>%
+  st_transform(crs = 3035) %>%
+  st_crs()
+
+# You can also use the CRS of another dataset.
+castles %>%
+  st_transform(crs = st_crs(municipalities)) %>%
+  st_crs()
+```
+
+`st_area()` will calculate the area of a geometry:
+
+```{r}
+# Calculate the area of the municipality of Salzburg city.
+municipalities_sbg %>%
+  filter(name == "Salzburg") %>%
+  st_area()
+```
+
+`st_buffer()` draws a buffer around a geometry:
+
+```{r}
+# Draw a buffer of 500m around the Festung Hohensalzburg.
+castles %>%
+  filter(Name == "Festung Hohensalzburg") %>%
+  st_buffer(500) %>%
+  mapview()
+```
+
+`st_union()` merges several geometries into one:
+
+```{r}
+# Merge all municipalities in the Salzburg province.
+municipalities_sbg %>%
+  st_union() %>%
+  mapview()
+```
+
+Hopefully you noticed that `sf` functions (and also `mapview`) work really well together with `dplyr` and pipes. Some `dplyr` functions work slightly different on `sf` objects, because of the *sticky geometry* that we talked about before. For example, selecting a variable will always keep the geometry along.
+
+```{r}
+# Here, we select only Name, but the geometry sticks with it.
+castles %>%
+  select(Name)
+```
+
+Also, summarising a variable will also summarise the geometry. That is, when you summarise a variable for a set of points, the `POINT` geometry of all these points will be merged together into one `MULTIPOINT` geometry. See it for yourself:
+
+```{r}
+# Count all the castles in the data. Counting is done with the function n().
+castles %>%
+  summarise(total_count = n())
+```
+
+Here, you are probably not so interested in this `MULTIPOINT` geometry. No worries, you can easily get rid of the geometry by setting it to `NULL`. Of course, the data will then lose its spatial properties.
+
+```{r}
+castles %>%
+  summarise(total_count = n()) %>%
+  st_set_geometry(NULL)
+```
+
+Finally, also the `join` functionality has a spatial counterpart: `st_join()`. To understand it, we first have to introduce something we call *spatial predicates*. These are functions that accept two geometries, and will apply a function to them that returns either `TRUE` or `FALSE`. Too technical? Let's just look at an example.
+
+The spatial predicate `st_within` will tell you if geometry a is fully inside geometry b: is the Festung Hohensalzburg inside the municipality of Salzburg?
+
+```{r}
+# Don't forget to put them in exactly the same CRS!
+festung = castles %>% filter(Name == "Festung Hohensalzburg") %>% st_transform(st_crs(municipalities))
+sbg_city = municipalities_sbg %>% filter(name == "Salzburg")
+
+st_within(festung, sbg_city)
+```
+Answer: yes! (hint: 1 stands for `TRUE`). See [here](https://r-spatial.github.io/sf/articles/sf3.html#binary-logical-operations) a description of all available spatial predicates.
+
+Now what does this have to do with joins? We can use these spatial predicates to spatially join information from two spatial datasets! In our example: we want to add to the festung point information about the municipality in which it is located.
+
+```{r}
+festung %>%
+  st_join(municipalities_sbg, join = st_within)
+```
+
+> **NOTE:**
+> By default, `st_join()` does a left join. When you add `left = FALSE`, it will do an inner join.
+
+So, that was a lot of reading.... Time to do something practical. Oh, and also for `sf` there is a [cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/sf.pdf).
+
+### Exercises
+#### 1. Wrangle the available data in such a way that you end up with a dataset `attractions_sbg`, which is a copy of the `municipalities_sbg`, but with a few extra columns:
+
+* `castles` describing the number of castles in that municipality
+* `museums` describing the number of museums in that municipality
+* `attractions` being the sum of the number of castles and museums
+* `per_sqm` being the number of attractions per square meter
+* `per_person` being the number of attractions per inhabitant
+
+* HINT: with `mutate(columnname = replace_na(columnname, 0)` you replace all `NA` values in a column with 0. You will need it ;-)
+
+### Bonus
+Are you already experienced in R and is this much to easy for you? Answer also these questions.
+
+#### 1. Which castles are a museum?
+#### 2. Filter the Salzburg province municipalities from the Austrian municipalities, by using the [Provinces dataset](https://data.statistik.gv.at/data/OGDEXT_NUTS_1_STATISTIK_AUSTRIA_NUTS2_20160101.zip), instead of the population CSV we used in the examples.
+
+```{r, include=FALSE,warning=FALSE}
 castle_count = castles %>%
   st_set_geometry(NULL) %>%
   group_by(Gemeinde) %>%
   summarise(castles = n())
 
-castles_salzburg = left_join(municipalities_salzburg, castle_count, by = c("name" = "Gemeinde")) 
+castles_salzburg = municipalities_sbg %>% 
+  left_join(castle_count, by = c("name" = "Gemeinde"))
 
-castles_salzburg = castles_salzburg %>% mutate(castles = replace_na(castles, 0))
+castles_salzburg = castles_salzburg %>% 
+  mutate(castles = replace_na(castles, 0))
 
-museums = st_transform(museums, crs = st_crs(municipalities_salzburg))
-museums = st_join(museums, municipalities_salzburg)
+museums = museums %>% 
+  st_transform(crs = st_crs(municipalities_sbg)) %>%
+  st_join(municipalities_sbg, join = st_intersects)
 
 museum_count = museums %>%
   st_set_geometry(NULL) %>%
   group_by(name) %>%
   summarise(museums = n())
 
-attractions_salzburg = left_join(castles_salzburg, museum_count, by = "name")
-attractions_salzburg = attractions_salzburg %>% mutate(museums = replace_na(museums, 0))
-attractions_salzburg = attractions_salzburg %>% 
-  mutate(attractions = castles + museums) %>% 
-  mutate(area = st_area(geometry))
+attractions_sbg = castles_salzburg %>%
+  left_join(museum_count, by = "name")
 
-attractions_salzburg = attractions_salzburg %>% mutate(attractions_density = attractions/area)
+attractions_sbg = attractions_sbg %>% 
+  mutate(museums = replace_na(museums, 0))
+
+attractions_sbg = attractions_sbg %>% 
+  mutate(attractions = castles + museums, area = st_area(geometry)) %>% 
+  mutate(per_sqm = attractions/area, per_person = attractions/population)
 ```
 
 # Visualize data
 
+Visualizing data is a very important part of spatial data analysis. And this includes not only maps! For example, we can compare the area and population of municipalities in a scatterplot. Easiest, is with a simple base R plot:
+
 ```{r}
-# This is base R plotting. A simple scatterplot can be created with one line. Try changing the variables!
-plot(attractions ~ population, data = attractions_salzburg)
-
-# A more 'tidy' way to plot, with very nice results is ggplot2
-library(ggplot2)
-g = attractions_salzburg %>% 
-  # filter(name != 'Salzburg') %>% 
-  ggplot(aes(x = museums, y = castles)) +
-  geom_point(alpha = 0.5, size = 4)
-g
-
-# Which we can easily make interactive with the plotly package
-library(plotly, quietly = T)
-g %>% ggplotly()
+# This is base R plotting. A simple scatterplot can be created with one line.
+plot(area ~ population, data = attractions_sbg)
 ```
+
+Very easy, but you will probably not impress your friends. `ggplot2` is a tidyverse package that makes plotting more fancy. It works with layers, that you add together with `+`. In our example, we first initialize the plot (Which dataset? Which variables on the x and y axes?), and then add scatter points as a layer.
+
+> **NOTE:**
+> You may have noticed that the area column has a unit associated with it. This is done by the `units` packages, with is imported by `sf`. Unfortunately, `ggplot2` is not fancy enough to deal with this, so we'll have to drop the units first.
+
+```{r}
+# A more 'tidy' way to plot, with very nice results is ggplot2.
+scatter = attractions_sbg %>%
+  mutate(area = units::drop_units(area)) %>%
+  ggplot(aes(x = population, y = area)) +
+  geom_point()
+
+scatter
+```
+
+As you see, `ggplot2` works very well in combination with pipes. Also, you noticed of course that there is one point that makes our plot a little ugly (which municipality would that be...). You can remove this point, but the nice thing about `ggplot2` is that you can provide the plot to the `plotly` library, which will magically turn it into an interactive plot in just one line of code! Now you can some in to any area of your plot.
+
+```{r}
+library(plotly)
+ggplotly(scatter)
+```
+
+Back to mapping. We already learned how to make fast interactive maps with `mapview`. Static thematic maps can be made in `ggplot2` (there is the `geom_sf()` layer for this, try it if you feel adventurous!), but `tmap` is a package that is even better suited for this task. Just as `ggplot2`, `tmap` works with different layers. First, you create a shape, then you decide how to visualize that shape. You can add several shapes on top of each other if you want! We cheat a little bit with the legend breaks such that this one municipality does not bothers us once more.
 
 ```{r}
 library(tmap)
-t = tm_shape(attractions_salzburg) +
+map = tm_shape(attractions_sbg) +
   tm_polygons(col = 'population', style = 'jenks', palette = 'viridis') 
 
-t
+map
 ```
+
+### Exercises
+#### 1. Plot the same scatter plot again without the annoying municipality.
+#### 2. Explore relations between other variables with either a base R plot, or an (interactive) ggplot. Don't be scared to also play around with colors or other style attributes. Find the [ggplot cheatsheet](https://d33wubrfki0l68.cloudfront.net/21d683072b0c21cbd9b41fc0e37a587ad26b9525/cbf41/wp-content/uploads/2018/08/data-visualization-2.1.png) here.
+#### 3. First, run `tmap_mode('view')`, and then create the same thematic map as in the example. What happens?
+
+# Write data
+One thing we did not cover yet, is to export your data. This is made simple with `st_write()`. Let's export our result as a GeoJSON.
 
 ```{r}
-tmap_mode('view')
-t
-```
-
-```{r, eval = F}
-st_write(attractions_salzburg, 'data/result.gpkg')
+# When the file already exists, force an overwrite.
+st_write(attractions_sbg, 'result.geojson', delete_dsn = TRUE)
 ```
 
 # Shiny your data!
 
-Try this code out to get a simple Shiny app with the result we just got! To do so, copy the code on a new R script and run it ;)
+Feeling fancy? Open the file `app.Rmd` (which lives in the GitHub repository) and click on `Run Document`. Yes, you can also render an R Markdown into a web app! With not too much code we created a small interactive web app of the data. Nothing too fancy, but not too hard and scary either! If you still have time and feel adventurous, try to pimp the app. See [here](https://rmarkdown.rstudio.com/flexdashboard/index.html) for some documentation.
 
-This is a very basic example, but you can add many more things! Try adding a slider, or printing a data frame after you click on a polygon, with a list of castles you can visit in the muncipality selected...
+# Links
 
-```{r, eval = F}
-library(tmap)
-library(sf)
+We only covered a small part of all the things that are possible in the spatial R world. If you are interested and want to know more, you are lucky. There is an incredible amount of free resources online (almost all of them created with R Markdown, by the way). Here are some links that might be useful:
 
-if (require("shiny")) {
-  
-  ## Load the result just created 
-  result = st_read('data/result.gpkg')
-  ## Remove variables that will not be options for plotting
-  result_vars = setdiff(names(result), c("id", "name", "geom"))
-  
-  # Prepare the basic layout of the User Interface
-  ui <- fluidPage(
-    # Application title
-    titlePanel("Salzburg District population and touristic attractions"),
-    
-    # Include a vertical layout to add bith the text box and the map
-    verticalLayout(
-      
-      # Top panel with municipality name
-      wellPanel(textOutput("municipality")),
-      
-      # the map itself
-      tmapOutput("map"),
-      selectInput("attribute", label = "Select variable: ", result_vars)
-    )
-  )
-  
-  # Prepare the server 
-  server <- function(input, output, session) {
-    
-    # Here comes the code for the tmap (remember the interactive version?)
-    output$map <- renderTmap({
-      tm_shape(result) +
-        tm_polygons(
-          # To plot the first variable 
-          col = result_vars[1],
-          # This sets the layer number for the municipalities to plot. 
-          # Always set as 400 + n
-          zindex = 401, 
-          style = 'jenks', 
-          palette = 'viridis'
-        )
-    })
-    
-    # Adding some interaction, this section will change the attribute 
-    # plotted when the user selects it on the drop-down list
-    observe({
-      var <- input$attribute
-      tmapProxy("map", session, {
-        tm_remove_layer(401) +
-          tm_shape(result) +
-          tm_polygons(var, zindex = 401, style = 'jenks', palette = 'viridis')
-      })
-    })
-    
-    # This will display the name of the municipality on the 
-    # text box on top of the map when its polygon is clicked on the map
-    observe({
-      event <- input$map_shape_click
-      output$municipality <- renderText(
-        # We had to do some workarounds for this section to work properly,
-        # due to data classes mistmatches 
-        # Essentially we obtain the name of the municipality that corresponds 
-        # to the id clicked on the map by matching it to the municipality id 
-        as.character(result$name[paste0('X',result$id) == event$id])
-      )
-
-    })
-    
-
-  }	
-  
-  # Save the app
-  app <- shinyApp(ui, server)
-  if (interactive()) app
-}
-```
-
+* [R For Data Science](https://r4ds.had.co.nz/). A book on how to do data science in R, not specifically related to spatial data science.
+* [Spatial Data Science](https://keen-swartz-3146c4.netlify.com/). A book on spatial data science in R! Still in development, however.
+* [Geocomputation with R](https://geocompr.robinlovelace.net/). A book on everything you need to know about spatial computation in R. Also suitable for beginners!
+* [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/). A book on everything you need to know about R Markdown. From creating html documents, to PDF files, to slideshows, to dashboards, to books, to ...
+* [Learn Shiny](https://shiny.rstudio.com/tutorial/#written-tutorials). Tutorials to get started with Shiny Web Apps. The small app we created here is just a small start. A lot more is possible!
+* [Advanced R](http://adv-r.had.co.nz/). And if you then finally want to dive into the deep, this is a book about more advanced topics related to R. Classes, methods, object oriented programming, functional programming, and everything you don't want to care about when you just start.

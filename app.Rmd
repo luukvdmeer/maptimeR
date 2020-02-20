@@ -1,0 +1,73 @@
+---
+title: "Castles & Museums in Salzburger Land"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(tmap)
+library(sf)
+
+result = st_read('result.geojson', crs = 31287)
+```
+
+Sidebar {.sidebar}
+=======================================================================
+
+Salzbuger Land is famous for it's castles and museums. But where are they?
+
+```{r}
+selectInput(
+  "mun", label = "Municipality:",
+  choices = result %>% pull(name), selected = "Salzburg"
+)
+```
+
+Dashboard
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Castles {.value-box}
+
+```{r}
+renderValueBox({
+  valueBox(
+    value = result %>% filter(name == input$mun) %>% pull(castles),
+    icon = "fa-fort-awesome",
+    color = "primary"
+  )
+})
+```
+
+### Museums {.value-box}
+
+```{r}
+renderValueBox({
+  valueBox(
+    value = result %>% filter(name == input$mun) %>% pull(museums),
+    icon = "fa-store-alt",
+    color = "primary"
+  )
+})
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Map
+
+```{r}
+renderPlot({
+  tm_shape(result) +
+    tm_polygons(col = "grey") +
+  tm_shape(result %>% filter(name == input$mun)) +
+    tm_polygons(col = "blue") +
+  tm_layout(frame = FALSE)
+})
+```
