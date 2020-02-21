@@ -46,14 +46,6 @@ background-size: 80px
 background-position: 50% 95%
 class: center, middle
 
-# Find the map [here](https://luukvdmeer.github.io/maptimeR/castles.html)
-
----
-background-image: url('maptime.jpg')
-background-size: 80px
-background-position: 50% 95%
-class: center, middle
-
 ## Programming is a **tool** to get your things done
 ## It is meant to make your life **easier**, not harder
 
